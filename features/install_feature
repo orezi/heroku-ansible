@@ -1,0 +1,22 @@
+Feature: Deploy app to heroku
+  
+  Scenario: Setup environment
+    When I setup machine for deploy
+    Then it should be successful
+    And Git should be installed
+    And Pip should be installed
+    And Pexpect should be installed
+    And heroku toolbelt should be installed
+
+  Scenario: Setup Heroku account
+    When I setup Heroku account
+    Then it should be successful
+    And Heroku account credentials should be correct
+    And Heroku app should exist
+    And Database uri should be set
+    And Database secret should be set
+
+  Scenario: Clone repo and Deploy app
+    When I clone repo and deploy app
+    Then it should be successful
+    And app should be available on port 80
