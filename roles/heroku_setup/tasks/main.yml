@@ -1,0 +1,49 @@
+---
+- name: Heroku login
+  expect:
+    command: heroku login
+    responses:
+      (?i)Email: "{{ heroku_email }}"
+      (?i)Password: "{{ heroku_password }}"
+  tags:
+    - heroku_setup
+
+- name: Check if heroku app exists
+  command: bash -c "heroku apps | grep {{ app_name }}"
+  register: app_exists
+  ignore_errors: True
+  tags:
+    - heroku_setup
+    - find_app
+
+- name: Create heroku App
+  when: app_exists|failed
+  command: bash -c "heroku create {{ app_name }}"
+  tags:
+    - heroku_setup
+
+- name: Check if db variable is set
+  command: bash -c "heroku config --app {{ app_name }} | grep {{db_key}}"
+  register: database_uri_exists
+  ignore_errors: True
+  tags:
+    - heroku_setup
+
+- name: Check if secret varible is set
+  command: bash -c "heroku config --app {{ app_name }} | grep {{secret_key}}"
+  register: secret_exists
+  ignore_errors: True
+  tags:
+    - heroku_setup
+
+- name: Set database variable
+  command: bash -c "heroku config:set --app {{ app_name }} {{db_key}}={{db_uri}}"
+  when: database_uri_exists|failed
+  tags:
+    - heroku_setup
+
+- name: Set secret variable
+  command: bash -c "heroku config:set --app {{ app_name }} {{secret_key}}={{secret_value}}"
+  when: secret_exists|failed
+  tags:
+    - heroku_setup

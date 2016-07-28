@@ -1,0 +1,57 @@
+---
+- name: Update apt cache
+  apt: update_cache=yes
+  tags:
+    - setup
+
+- name: Check if Git is installed
+  command: bash -c "git --version | grep git"
+  register: git_exists
+  ignore_errors: True
+  tags:
+    - setup
+
+- name: Install Git
+  when: git_exists|failed
+  apt: name=git state=latest
+  tags:
+    - setup
+
+- name: check if pip is installed
+  command: bash -c "pip --version | grep pip"
+  register: pip_exists
+  ignore_errors: True
+  tags:
+    - setup
+
+- name: Install pip
+  when: pip_exists|failed
+  apt: name=python-pip state=latest
+  tags:
+    - setup
+
+- name: check if pexpect is installed
+  command: bash -c "pip list | grep pexpect"
+  register: pexpect_exists
+  ignore_errors: True
+  tags:
+    - setup
+
+- name: install pexpect
+  when: pexpect_exists|failed
+  pip: name=pexpect
+  tags:
+    - setup
+
+- name: check if heroku toolbelt is installed
+  command: bash -c "heroku --version | grep heroku"
+  register: heroku_exists
+  ignore_errors: True
+  tags:
+    - setup
+
+- name: Install heroku toolbelt
+  when: heroku_exists|failed
+  command: bash -c "wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh"
+  tags:
+    - setup

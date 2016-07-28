@@ -1,0 +1,25 @@
+---
+- name: Check if there are new changes
+  command: bash -c "cd {{ansible_env.PWD}}/{{ app_dir }} && git status | grep 'nothing to commit'"
+  register: change_exists
+  ignore_errors: True
+  tags:
+    - heroku_push
+
+- name: Heroku add
+  command: chdir={{ansible_env.PWD}}/{{ app_dir }} git add .
+  when: change_exists|failed
+  tags:
+    - heroku_push
+
+- name: Heroku commit
+  command: chdir={{ansible_env.PWD}}/{{ app_dir }} git commit -m '{{ commit_message }}'
+  when: change_exists|failed
+  tags:
+    - heroku_push
+
+- name: Heroku push
+  command: chdir={{ansible_env.PWD}}/{{ app_dir }} git push heroku master
+  when: (change_exists|failed) or (cloned.changed == true)
+  tags:
+    - heroku_push

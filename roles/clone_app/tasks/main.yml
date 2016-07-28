@@ -1,0 +1,25 @@
+---
+- name: Check for app directory
+  command: bash -c "ls {{ansible_env.PWD}} | grep {{app_dir}}"
+  register: dir_exists
+  ignore_errors: True
+  tags:
+    - git_clone
+
+- name: clone git repository
+  git: repo={{repo_name}} dest={{ansible_env.PWD}}/{{app_dir}} update=yes
+  when: dir_exists|failed
+  register: cloned
+  tags:
+    - git_clone
+
+- name: Initialize git repo
+  command: chdir={{ansible_env.PWD}}/{{ app_dir }} git init
+  when: cloned.changed == true
+  tags:
+    - git_clone
+
+- name: set remote
+  command: chdir={{ansible_env.PWD}}/{{ app_dir }} heroku git:remote -a {{ app_name }}
+  tags:
+    - git_clone
