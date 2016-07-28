@@ -1,0 +1,12 @@
+---
+- hosts: server_ip
+  user: ubuntu
+  become: yes
+  become_method: sudo
+  vars_files:
+    - "vars.yml"
+  roles:
+  - setup
+  - heroku_setup
+  - clone_app
+  - heroku_push
