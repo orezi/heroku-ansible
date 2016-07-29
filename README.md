@@ -1,5 +1,7 @@
 # heroku-ansible
 
+Deploy your app to heroku from your ubuntu machine
+
 Clone this repo: 
 
 ```git clone https://github.com/andela-oolarewaju/heroku-ansible.git ```
