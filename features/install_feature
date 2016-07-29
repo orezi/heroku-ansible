@@ -13,8 +13,6 @@ Feature: Deploy app to heroku
     Then it should be successful
     And Heroku account credentials should be correct
     And Heroku app should exist
-    And Database uri should be set
-    And Database secret should be set
 
   Scenario: Clone repo and Deploy app
     When I clone repo and deploy app
